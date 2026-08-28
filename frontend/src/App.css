@@ -116,22 +116,27 @@ button {
 
 .tabela-posts th:nth-child(1),
 .tabela-posts td:nth-child(1) {
-  width: 45%;
+  width: 30%;
 }
 
 .tabela-posts th:nth-child(2),
 .tabela-posts td:nth-child(2) {
-  width: 20%;
+  width: 15%;
 }
 
 .tabela-posts th:nth-child(3),
 .tabela-posts td:nth-child(3) {
-  width: 15%;
+  width: 25%;
 }
 
 .tabela-posts th:nth-child(4),
 .tabela-posts td:nth-child(4) {
-  width: 20%;
+  width: 13%;
+}
+
+.tabela-posts th:nth-child(5),
+.tabela-posts td:nth-child(5) {
+  width: 17%;
   white-space: nowrap;
 }
 
@@ -429,6 +434,14 @@ button {
 .post-card-titulo {
   font-size: 17px;
   color: var(--cor-escura);
+}
+
+.post-resumo-tabela {
+  color: #555;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .post-card-resumo {

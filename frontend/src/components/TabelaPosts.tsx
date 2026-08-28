@@ -1,6 +1,14 @@
 import type { IPost } from '../interfaces/IPost';
 import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 
+const TAMANHO_RESUMO = 100;
+
+function resumirConteudo(conteudo: string) {
+  return conteudo.length > TAMANHO_RESUMO
+    ? `${conteudo.slice(0, TAMANHO_RESUMO)}…`
+    : conteudo;
+}
+
 interface TabelaPostsProps {
   posts: IPost[];
   usuarioLogado: IUsuarioLogado;
@@ -51,6 +59,7 @@ function TabelaPosts({
           <tr>
             <th>Título</th>
             <th>Autor</th>
+            <th>Descrição</th>
             <th>Publicado em</th>
             <th>Ações</th>
           </tr>
@@ -58,7 +67,7 @@ function TabelaPosts({
         <tbody>
           {posts.length === 0 ? (
             <tr>
-              <td colSpan={4}>Nenhum post encontrado</td>
+              <td colSpan={5}>Nenhum post encontrado</td>
             </tr>
           ) : (
             posts.map((post) => (
@@ -67,6 +76,7 @@ function TabelaPosts({
                   {post.titulo}
                 </td>
                 <td>{post.autor.nome}</td>
+                <td className="post-resumo-tabela">{resumirConteudo(post.conteudo)}</td>
                 <td>{new Date(post.createdAt).toLocaleDateString('pt-BR')}</td>
                 <td>
                   {podeGerenciar(post) && (
