@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 
 export type Tela = 'posts' | 'usuarios';
@@ -10,8 +11,19 @@ interface HeaderProps {
 }
 
 function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
+  const [menuAberto, setMenuAberto] = useState(false);
   const isAdmin = usuarioLogado.perfil === 'Administrador';
   const isAluno = usuarioLogado.perfil === 'Aluno';
+
+  const irPara = (novaTela: Tela) => {
+    onMudarTela(novaTela);
+    setMenuAberto(false);
+  };
+
+  const sair = () => {
+    setMenuAberto(false);
+    onLogout();
+  };
 
   return (
     <header className="header">
@@ -31,6 +43,7 @@ function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
           </nav>
         )}
       </div>
+
       <div className="header-acoes">
         <span className="usuario-logado">
           {usuarioLogado.nome} ({usuarioLogado.perfil})
@@ -39,6 +52,35 @@ function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
           Sair
         </button>
       </div>
+
+      <button
+        type="button"
+        className="btn-menu-mobile"
+        onClick={() => setMenuAberto((aberto) => !aberto)}
+        aria-label="Abrir menu"
+        aria-expanded={menuAberto}
+      >
+        ☰
+      </button>
+
+      {menuAberto && (
+        <div className="menu-mobile">
+          <div className="menu-mobile-usuario">
+            {usuarioLogado.nome} ({usuarioLogado.perfil})
+          </div>
+          {!isAluno && (
+            <button className={tela === 'posts' ? 'aba-ativa' : ''} onClick={() => irPara('posts')}>
+              Posts
+            </button>
+          )}
+          {isAdmin && (
+            <button className={tela === 'usuarios' ? 'aba-ativa' : ''} onClick={() => irPara('usuarios')}>
+              Usuários
+            </button>
+          )}
+          <button onClick={sair}>Sair</button>
+        </div>
+      )}
     </header>
   );
 }

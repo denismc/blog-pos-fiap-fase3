@@ -1,5 +1,6 @@
 import type { IPost } from '../interfaces/IPost';
 import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
+import { IconeEditar, IconeExcluir } from './Icones';
 
 const TAMANHO_RESUMO = 100;
 
@@ -54,47 +55,49 @@ function TabelaPosts({
           </button>
         )}
       </form>
-      <table className="tabela tabela-posts">
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Descrição</th>
-            <th>Publicado em</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {posts.length === 0 ? (
+      <div className="tabela-wrapper">
+        <table className="tabela tabela-posts">
+          <thead>
             <tr>
-              <td colSpan={5}>Nenhum post encontrado</td>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Descrição</th>
+              <th>Publicado em</th>
+              <th><span className="sr-only">Ações</span></th>
             </tr>
-          ) : (
-            posts.map((post) => (
-              <tr key={post._id}>
-                <td className="post-titulo" onClick={() => onAbrirDetalhe(post)} title={post.titulo}>
-                  {post.titulo}
-                </td>
-                <td>{post.autor.nome}</td>
-                <td className="post-resumo-tabela">{resumirConteudo(post.conteudo)}</td>
-                <td>{new Date(post.createdAt).toLocaleDateString('pt-BR')}</td>
-                <td>
-                  {podeGerenciar(post) && (
-                    <>
-                      <button className="btn-editar" onClick={() => onEditar(post)}>
-                        Editar
-                      </button>
-                      <button className="btn-excluir" onClick={() => onExcluir(post._id)}>
-                        Excluir
-                      </button>
-                    </>
-                  )}
-                </td>
+          </thead>
+          <tbody>
+            {posts.length === 0 ? (
+              <tr>
+                <td colSpan={5}>Nenhum post encontrado</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              posts.map((post) => (
+                <tr key={post._id}>
+                  <td className="post-titulo" data-label="Título" onClick={() => onAbrirDetalhe(post)} title={post.titulo}>
+                    {post.titulo}
+                  </td>
+                  <td data-label="Autor">{post.autor.nome}</td>
+                  <td className="post-resumo-tabela" data-label="Descrição">{resumirConteudo(post.conteudo)}</td>
+                  <td data-label="Publicado em">{new Date(post.createdAt).toLocaleDateString('pt-BR')}</td>
+                  <td data-label="Ações">
+                    {podeGerenciar(post) && (
+                      <>
+                        <button className="btn-editar" title="Editar" aria-label="Editar post" onClick={() => onEditar(post)}>
+                          <IconeEditar />
+                        </button>
+                        <button className="btn-excluir" title="Excluir" aria-label="Excluir post" onClick={() => onExcluir(post._id)}>
+                          <IconeExcluir />
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
