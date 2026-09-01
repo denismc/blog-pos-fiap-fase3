@@ -140,6 +140,16 @@ button {
   white-space: nowrap;
 }
 
+.btn-editar,
+.btn-excluir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
 .btn-editar {
   background: var(--cor-secundaria);
   color: white;
@@ -149,6 +159,12 @@ button {
 .btn-excluir {
   background: #d32f2f;
   color: white;
+}
+
+.btn-editar:focus-visible,
+.btn-excluir:focus-visible {
+  outline: 2px solid var(--cor-escura);
+  outline-offset: 2px;
 }
 
 .overlay {
@@ -467,4 +483,226 @@ button {
 
 .post-card-data {
   color: #999;
+}
+
+/* Responsividade */
+.tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabela-wrapper .tabela {
+  box-shadow: none;
+}
+
+.tabela-wrapper .tabela td:last-child {
+  white-space: nowrap;
+}
+
+.header {
+  position: relative;
+}
+
+.btn-menu-mobile {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  border-radius: 6px;
+}
+
+.btn-menu-mobile:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-mobile {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--cor-escura);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.menu-mobile-usuario {
+  padding: 14px 18px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.menu-mobile button {
+  background: transparent;
+  color: white;
+  text-align: left;
+  padding: 14px 18px;
+  border-radius: 0;
+}
+
+.menu-mobile button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-mobile button.aba-ativa {
+  background: var(--cor-primaria);
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 20px auto;
+    padding: 0 12px;
+  }
+
+  .header-nav,
+  .header-acoes {
+    display: none;
+  }
+
+  .btn-menu-mobile {
+    display: flex;
+  }
+
+  .busca-posts {
+    flex-wrap: wrap;
+  }
+
+  .busca-posts input {
+    flex-basis: 100%;
+  }
+
+  .busca-posts button {
+    flex: 1;
+  }
+
+  .tabela-wrapper {
+    overflow-x: visible;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .tabela {
+    display: block;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .tabela tbody {
+    display: block;
+  }
+
+  .tabela thead {
+    display: none;
+  }
+
+  .tabela tr {
+    display: block;
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+  }
+
+  .tabela-posts th:nth-child(1),
+  .tabela-posts td:nth-child(1),
+  .tabela-posts th:nth-child(2),
+  .tabela-posts td:nth-child(2),
+  .tabela-posts th:nth-child(3),
+  .tabela-posts td:nth-child(3),
+  .tabela-posts th:nth-child(4),
+  .tabela-posts td:nth-child(4),
+  .tabela-posts th:nth-child(5),
+  .tabela-posts td:nth-child(5) {
+    width: auto;
+  }
+
+  .tabela tr:hover td {
+    background: transparent;
+  }
+
+  .tabela td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: normal;
+    text-overflow: clip;
+    overflow: visible;
+  }
+
+  .tabela td:last-child {
+    border-bottom: none;
+  }
+
+  .tabela td[data-label="Ações"] {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .tabela td:not([data-label="Ações"])::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #777;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .modal {
+    padding: 20px;
+    max-width: 92vw;
+    max-height: 90vh;
+  }
+
+  .modal-grande {
+    width: 92vw;
+    max-width: 92vw;
+    max-height: 90vh;
+  }
+
+  .login-box {
+    padding: 24px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 17px;
+  }
+
+  .acoes-modal {
+    flex-direction: column-reverse;
+  }
+
+  .acoes-modal button {
+    width: 100%;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
