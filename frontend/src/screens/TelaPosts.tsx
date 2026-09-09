@@ -6,20 +6,17 @@ import FormPost from '../components/FormPost';
 import PostDetalhe from '../components/PostDetalhe';
 import type { CriarPostForm, AtualizarPostForm } from '../schemas/postSchema';
 import type { IPost } from '../interfaces/IPost';
-import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 import type { IAxiosError } from '../interfaces/IAxiosError';
+import { useAuth } from '../contexts/AuthContext';
 
-interface TelaPostsProps {
-  usuarioLogado: IUsuarioLogado;
-}
-
-function TelaPosts({ usuarioLogado }: TelaPostsProps) {
+function TelaPosts() {
+  const { usuarioLogado } = useAuth();
   const [posts, setPosts] = useState<IPost[]>([]);
   const [termoBusca, setTermoBusca] = useState('');
   const [modal, setModal] = useState<'detalhe' | 'form' | null>(null);
   const [postSelecionado, setPostSelecionado] = useState<IPost | null>(null);
 
-  const podeCriar = usuarioLogado.perfil === 'Administrador' || usuarioLogado.perfil === 'Professor';
+  const podeCriar = usuarioLogado?.perfil === 'Administrador' || usuarioLogado?.perfil === 'Professor';
 
   const carregarPosts = async (termo?: string) => {
     const url = termo ? `/posts/search?q=${encodeURIComponent(termo)}` : '/posts';
@@ -87,7 +84,6 @@ function TelaPosts({ usuarioLogado }: TelaPostsProps) {
     <div>
       <TabelaPosts
         posts={posts}
-        usuarioLogado={usuarioLogado}
         termoBusca={termoBusca}
         onTermoBuscaChange={setTermoBusca}
         onBuscar={handleBuscar}
