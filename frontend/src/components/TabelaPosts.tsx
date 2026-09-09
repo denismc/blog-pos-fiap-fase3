@@ -1,18 +1,15 @@
 import type { IPost } from '../interfaces/IPost';
-import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 import { IconeEditar, IconeExcluir } from './Icones';
+import { useAuth } from '../contexts/AuthContext';
 
 const TAMANHO_RESUMO = 100;
 
 function resumirConteudo(conteudo: string) {
-  return conteudo.length > TAMANHO_RESUMO
-    ? `${conteudo.slice(0, TAMANHO_RESUMO)}…`
-    : conteudo;
+  return conteudo.length > TAMANHO_RESUMO ? `${conteudo.slice(0, TAMANHO_RESUMO)}…` : conteudo;
 }
 
 interface TabelaPostsProps {
   posts: IPost[];
-  usuarioLogado: IUsuarioLogado;
   termoBusca: string;
   onTermoBuscaChange: (valor: string) => void;
   onBuscar: (e: React.FormEvent) => void;
@@ -25,7 +22,6 @@ interface TabelaPostsProps {
 
 function TabelaPosts({
   posts,
-  usuarioLogado,
   termoBusca,
   onTermoBuscaChange,
   onBuscar,
@@ -35,9 +31,11 @@ function TabelaPosts({
   podeCriar,
   onNovo,
 }: TabelaPostsProps) {
+  const { usuarioLogado } = useAuth();
+
   const podeGerenciar = (post: IPost) =>
-    usuarioLogado.perfil === 'Administrador' ||
-    (usuarioLogado.perfil === 'Professor' && post.autor._id === usuarioLogado.id);
+    usuarioLogado?.perfil === 'Administrador' ||
+    (usuarioLogado?.perfil === 'Professor' && post.autor._id === usuarioLogado.id);
 
   return (
     <div>
@@ -63,7 +61,9 @@ function TabelaPosts({
               <th>Autor</th>
               <th>Descrição</th>
               <th>Publicado em</th>
-              <th><span className="sr-only">Ações</span></th>
+              <th>
+                <span className="sr-only">Ações</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -78,7 +78,9 @@ function TabelaPosts({
                     {post.titulo}
                   </td>
                   <td data-label="Autor">{post.autor.nome}</td>
-                  <td className="post-resumo-tabela" data-label="Descrição">{resumirConteudo(post.conteudo)}</td>
+                  <td className="post-resumo-tabela" data-label="Descrição">
+                    {resumirConteudo(post.conteudo)}
+                  </td>
                   <td data-label="Publicado em">{new Date(post.createdAt).toLocaleDateString('pt-BR')}</td>
                   <td data-label="Ações">
                     {podeGerenciar(post) && (

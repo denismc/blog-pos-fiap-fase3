@@ -5,19 +5,16 @@ import Modal from '../components/Modal';
 import FormUsuario from '../components/FormUsuario';
 import type { CriarUsuarioForm, AtualizarUsuarioForm } from '../schemas/usuarioSchema';
 import type { IUsuario } from '../interfaces/IUsuario';
-import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 import type { IAxiosError } from '../interfaces/IAxiosError';
+import { useAuth } from '../contexts/AuthContext';
 
-interface TelaUsuariosProps {
-  usuarioLogado: IUsuarioLogado;
-}
-
-function TelaUsuarios({ usuarioLogado }: TelaUsuariosProps) {
+function TelaUsuarios() {
+  const { usuarioLogado } = useAuth();
   const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [usuarioEditando, setUsuarioEditando] = useState<IUsuario | null>(null);
 
-  const isAdmin = usuarioLogado.perfil === 'Administrador';
+  const isAdmin = usuarioLogado?.perfil === 'Administrador';
 
   const carregarUsuarios = async () => {
     const res = await api.get<IUsuario[]>('/usuarios');
@@ -83,12 +80,7 @@ function TelaUsuarios({ usuarioLogado }: TelaUsuariosProps) {
         )}
       </div>
 
-      <TabelaUsuarios
-        usuarios={usuarios}
-        onEditar={abrirModalEditar}
-        onExcluir={excluirUsuario}
-        usuarioLogado={usuarioLogado}
-      />
+      <TabelaUsuarios usuarios={usuarios} onEditar={abrirModalEditar} onExcluir={excluirUsuario} />
 
       {modalAberto && (
         <Modal titulo={usuarioEditando ? 'Editar Usuário' : 'Novo Usuário'} onFechar={fecharModal}>

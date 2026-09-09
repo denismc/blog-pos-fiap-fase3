@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
+import { useAuth } from '../contexts/AuthContext';
 
 export type Tela = 'posts' | 'usuarios';
 
 interface HeaderProps {
   tela: Tela;
   onMudarTela: (tela: Tela) => void;
-  usuarioLogado: IUsuarioLogado;
-  onLogout: () => void;
 }
 
-function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
+function Header({ tela, onMudarTela }: HeaderProps) {
   const [menuAberto, setMenuAberto] = useState(false);
+  const { usuarioLogado, logout } = useAuth();
+
+  if (!usuarioLogado) return null;
+
   const isAdmin = usuarioLogado.perfil === 'Administrador';
   const isAluno = usuarioLogado.perfil === 'Aluno';
 
@@ -22,7 +24,7 @@ function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
 
   const sair = () => {
     setMenuAberto(false);
-    onLogout();
+    logout();
   };
 
   return (
@@ -48,7 +50,7 @@ function Header({ tela, onMudarTela, usuarioLogado, onLogout }: HeaderProps) {
         <span className="usuario-logado">
           {usuarioLogado.nome} ({usuarioLogado.perfil})
         </span>
-        <button className="btn-logout" onClick={onLogout}>
+        <button className="btn-logout" onClick={sair}>
           Sair
         </button>
       </div>

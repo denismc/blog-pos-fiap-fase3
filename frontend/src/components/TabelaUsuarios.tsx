@@ -1,16 +1,16 @@
 import type { IUsuario } from '../interfaces/IUsuario';
-import type { IUsuarioLogado } from '../interfaces/IUsuarioLogado';
 import { IconeEditar, IconeExcluir } from './Icones';
+import { useAuth } from '../contexts/AuthContext';
 
 interface TabelaUsuariosProps {
   usuarios: IUsuario[];
-  usuarioLogado: IUsuarioLogado;
   onEditar: (id: string) => void;
   onExcluir: (id: string) => void;
 }
 
-function TabelaUsuarios({ usuarios, usuarioLogado, onEditar, onExcluir }: TabelaUsuariosProps) {
-  const isAdmin = usuarioLogado.perfil === 'Administrador';
+function TabelaUsuarios({ usuarios, onEditar, onExcluir }: TabelaUsuariosProps) {
+  const { usuarioLogado } = useAuth();
+  const isAdmin = usuarioLogado?.perfil === 'Administrador';
 
   return (
     <div className="tabela-wrapper">
@@ -45,7 +45,7 @@ function TabelaUsuarios({ usuarios, usuarioLogado, onEditar, onExcluir }: Tabela
                     <button className="btn-editar" title="Editar" aria-label="Editar usuário" onClick={() => onEditar(usuario._id)}>
                       <IconeEditar />
                     </button>
-                    {usuario._id !== usuarioLogado.id && (
+                    {usuario._id !== usuarioLogado?.id && (
                       <button className="btn-excluir" title="Excluir" aria-label="Excluir usuário" onClick={() => onExcluir(usuario._id)}>
                         <IconeExcluir />
                       </button>
