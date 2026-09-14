@@ -68,6 +68,23 @@ const options: swaggerJsdoc.Options = {
             updatedAt: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
           },
         },
+        Comentario: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string', example: '64a1b2c3d4e5f6a7b8c9d0e1' },
+            conteudo: { type: 'string', example: 'Ótimo post, muito esclarecedor!' },
+            autor: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string', example: '64a1b2c3d4e5f6a7b8c9d0e1' },
+                nome: { type: 'string', example: 'João Silva' },
+              },
+            },
+            post: { type: 'string', example: '64a1b2c3d4e5f6a7b8c9d0e1' },
+            createdAt: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
+            updatedAt: { type: 'string', example: '2024-01-01T00:00:00.000Z' },
+          },
+        },
         ErroValidacao: {
           type: 'object',
           properties: {
