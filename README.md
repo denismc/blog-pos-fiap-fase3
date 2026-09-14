@@ -42,6 +42,42 @@ Controller → Repository → Model → MongoDB
 
 O Repository Pattern permite trocar o banco de dados sem alterar os controllers, e facilita os testes unitários com mocks.
 
+## 🖥️ Front-end
+
+### Setup inicial
+
+```bash
+cd frontend
+npm install
+npm run dev       # ambiente de desenvolvimento (http://localhost:5173)
+npm run build     # build de produção (gera frontend/dist)
+```
+
+Se preferir rodar via Docker em vez de local, veja a seção "🐳 Rodando com Docker" mais abaixo — nesse caso não precisa do `npm install` manual.
+
+### Arquitetura da aplicação
+
+- **React + TypeScript + Vite**, sem roteador (`react-router`): a tela ativa é controlada por estado local em `App.tsx` (`tela: 'posts' | 'usuarios'`), já que a aplicação tem poucas telas e a navegação depende fortemente do perfil logado.
+- **Autenticação via Context API** (`src/contexts/AuthContext.tsx`): centraliza `usuarioLogado`, `login` e `logout`, evitando repassar esses dados por props em cada componente. O hook `useAuth()` dá acesso a esse estado em qualquer componente da árvore.
+- **Integração com a API** (`src/services/api.ts`): uma instância única do Axios com dois interceptors — um injeta o token JWT em toda requisição, o outro desloga automaticamente o usuário se a API responder 401.
+- **Formulários** (`FormPost`, `FormUsuario`, `Login`): usam `react-hook-form` + `zod` (`src/schemas/`) para validação — o mesmo padrão de schema usado no backend, também validado no cliente antes de enviar.
+- **Componentes por tela**:
+  - `screens/TelaPosts.tsx` — lista/busca/cria/edita/exclui posts (Administrador e Professor)
+  - `screens/TelaPostsAluno.tsx` — lista somente leitura em formato de cards (Aluno)
+  - `screens/TelaUsuarios.tsx` — gestão de usuários (Administrador)
+  - `components/PostDetalhe.tsx` — conteúdo completo do post + comentários (`components/Comentarios.tsx`)
+- **Estilização**: CSS puro (`src/App.css`), sem biblioteca de estilização — responsivo via media queries (breakpoints em 768px e 480px). Em telas pequenas, a navegação do header vira um menu suspenso (ícone ☰) e as tabelas (Posts/Usuários) viram cartões empilhados em vez de rolagem horizontal.
+- **Ícones**: SVGs inline em `components/Icones.tsx`, sem dependência externa de ícones.
+
+### Guia de uso
+
+1. **Login** — tela inicial, exige e-mail/senha de um usuário cadastrado (veja a seção "👤 Usuários padrão" mais abaixo).
+2. **Administrador**: acessa as abas "Posts" e "Usuários" no header. Pode criar/editar/excluir qualquer post e qualquer usuário.
+3. **Professor**: acessa só a aba "Posts". Pode criar posts e editar/excluir apenas os que ele mesmo criou.
+4. **Aluno**: não tem abas de navegação — vê direto a lista de posts em cards, com busca, acesso somente leitura, e pode comentar nos posts.
+5. **Comentários**: qualquer perfil autenticado pode comentar ao abrir um post; só o autor do comentário ou um Administrador pode excluí-lo.
+6. **Mobile**: em telas estreitas, o menu de navegação e o usuário logado saem do header e passam a ficar atrás do ícone ☰ no canto superior direito.
+
 ## 🧪 Testes
 
 O projeto usa **Jest + ts-jest** para testes unitários do backend. `npm test` já roda com `--coverage`, e o `jest.config.ts` tem um `coverageThreshold` global de 20% (statements, branches, functions e lines) — se a cobertura cair abaixo disso, os testes falham. Isso atende ao requisito de cobertura mínima de 20% do código.
@@ -53,7 +89,7 @@ cd backend
 npm test
 ```
 
-**Cobertura atual:** ~38% statements / ~41% lines (bem acima do mínimo de 20% exigido), com foco nos controllers — em especial `postController`, que cobre criação, edição e exclusão de posts, incluindo as regras de propriedade (autor vs. Administrador).
+**Cobertura atual:** ~42% statements / ~44% lines (bem acima do mínimo de 20% exigido), com foco nos controllers — em especial `postController` e `comentarioController`, que cobrem as regras de propriedade (autor vs. Administrador) e a checagem de existência do post ao comentar.
 
 | Controller | Testes |
 |------------|--------|
@@ -68,7 +104,10 @@ npm test
 | `pesquisarPosts` | 2 |
 | `atualizarPost` | 5 |
 | `deletarPost` | 4 |
-| **Total** | **28** |
+| `criarComentario` | 3 |
+| `listarComentarios` | 3 |
+| `deletarComentario` | 5 |
+| **Total** | **39** |
 
 ## 📋 Pré-requisitos
 
@@ -78,8 +117,8 @@ npm test
 
 **1 → Clone o repositório**
 ```bash
-git clone https://github.com/denismc/blog-pos-fiap.git
-cd blog-pos-fiap
+git clone https://github.com/denismc/blog-pos-fiap-fase3.git
+cd blog-pos-fiap-fase3
 ```
 
 **2 → Configure as variáveis de ambiente do backend**
@@ -191,6 +230,19 @@ Regras de negócio de `Posts`:
 - Em `PUT`, o campo `autor` só pode ser alterado por um Administrador; se um Professor enviá-lo, o valor é ignorado.
 - Alunos têm acesso somente de leitura (listar, buscar e pesquisar).
 
+**Comentários**
+
+| Método | Rota | Acesso |
+|--------|------|--------|
+| GET | `/api/comentarios?post=<id>` | Autenticado (Administrador, Professor, Aluno) |
+| POST | `/api/comentarios` | Autenticado (Administrador, Professor, Aluno) |
+| DELETE | `/api/comentarios/:id` | Autor do comentário ou Administrador |
+
+Regras de negócio de `Comentários`:
+- O campo `autor` nunca vem do corpo da requisição — é sempre o usuário autenticado (via token), igual em `Posts`.
+- Ao criar um comentário, o backend confirma que o `post` referenciado existe (404 caso contrário).
+- Qualquer perfil autenticado pode comentar; a exclusão é restrita ao autor do comentário ou a um Administrador.
+
 ## 📁 Estrutura
 
 ```
@@ -208,9 +260,12 @@ Regras de negócio de `Posts`:
 ├── frontend/
 │   ├── src/
 │   │   ├── components/   # Componentes React
+│   │   ├── contexts/     # Context API (usuário logado)
 │   │   ├── interfaces/   # Tipos TypeScript (frontend)
 │   │   ├── schemas/      # Schemas Zod
-│   │   └── services/     # Configuração do Axios
+│   │   ├── screens/      # Telas por perfil (Posts, Usuários)
+│   │   ├── services/     # Configuração do Axios
+│   │   └── types/        # Extensões de tipos
 │   └── ...
 ├── docker-compose.yml
 └── docker-compose.dev.yml
