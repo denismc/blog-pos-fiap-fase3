@@ -1,4 +1,5 @@
 import type { IPost } from '../interfaces/IPost';
+import Comentarios from './Comentarios';
 
 interface PostDetalheProps {
   post: IPost;
@@ -15,6 +16,7 @@ function PostDetalhe({ post }: PostDetalheProps) {
         {foiAtualizado && <p>Atualizado em {new Date(post.updatedAt).toLocaleDateString('pt-BR')}</p>}
       </div>
       <p className="post-detalhe-conteudo">{post.conteudo}</p>
+      <Comentarios postId={post._id} />
     </div>
   );
 }
